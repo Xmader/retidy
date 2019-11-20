@@ -1,0 +1,29 @@
+{
+  "name": "retidy",
+  "version": "0.1.0",
+  "description": "Extract each file from a webpack bundle",
+  "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xmader/retidy.git"
+  },
+  "author": "Xmader",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Xmader/retidy/issues"
+  },
+  "homepage": "https://github.com/Xmader/retidy#readme",
+  "dependencies": {
+    "@babel/generator": "^7.7.2",
+    "@babel/parser": "^7.7.3",
+    "@babel/traverse": "^7.7.2",
+    "@babel/types": "^7.7.2"
+  },
+  "devDependencies": {
+    "@types/babel__generator": "^7.6.0",
+    "@types/babel__traverse": "^7.0.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
