@@ -1,8 +1,7 @@
 
-import traverse, { TraverseOptions } from "@babel/traverse"
-import { File } from "@babel/types"
+import { VisitorWrapper, Visitor } from "./utils/visitor-wrapper"
 
-export const visitor: TraverseOptions = {
+export const visitor: Visitor = {
     NumericLiteral(path) {
         const { node } = path
 
@@ -14,8 +13,6 @@ export const visitor: TraverseOptions = {
     }
 }
 
-export const UnminifyNumericLiterals = (ast: File) => {
-    traverse(ast, visitor)
-}
+export const UnminifyNumericLiterals = VisitorWrapper(visitor)
 
 export default UnminifyNumericLiterals
