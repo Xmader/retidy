@@ -6,9 +6,13 @@ export { TraverseOptions }
 export type Visitor = TraverseOptions
 
 export const VisitorWrapper = (visitor: Visitor) => {
-    return (ast: File) => {
+    const traverseFn = (ast: File) => {
         traverse(ast, visitor)
     }
+
+    traverseFn.visitor = visitor
+
+    return traverseFn
 }
 
 export default VisitorWrapper
