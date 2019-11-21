@@ -14,7 +14,13 @@ export type TransformOptions = {
     [transformerName in keyof typeof allTransformers]?: boolean
 }
 
-export const transformAll = (ast: AST, options: TransformOptions = {}) => {
+const defaultTransformOptions: TransformOptions = {
+    
+}
+
+export const transformAll = (ast: AST, options?: TransformOptions) => {
+    options = Object.assign({}, defaultTransformOptions, options)
+
     Object.entries(allTransformers).forEach(([name, fn]) => {
         if (!(options && typeof options !== "undefined" && options[name] === false)) {  // ignore undefined
             fn(ast)
