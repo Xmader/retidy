@@ -1,12 +1,17 @@
 
 import traverse, { TraverseOptions } from "@babel/traverse"
-import { File } from "@babel/types"
+import { AST } from "./ast"
 
 export { TraverseOptions }
 export type Visitor = TraverseOptions
 
-export const VisitorWrapper = (visitor: Visitor) => {
-    const traverseFn = (ast: File) => {
+export interface Transformer {
+    (ast: AST): void;
+    visitor: TraverseOptions;
+}
+
+export const VisitorWrapper = (visitor: Visitor): Transformer => {
+    const traverseFn = (ast: AST) => {
         traverse(ast, visitor)
     }
 
