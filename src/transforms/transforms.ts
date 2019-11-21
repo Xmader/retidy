@@ -5,12 +5,14 @@ import unminifyNumericLiterals from "./unminify-numeric-literals"
 import unminifyBooleans from "./unminify-booleans"
 import transformVoidToUndefined from "./transform-void-to-undefined"
 import unminifyInfinity from "./unminify-infinity"
+import flipComparisons from "./flip-comparisons-again"
 
 export const allTransformers = {
     unminifyNumericLiterals,
     unminifyBooleans,
     transformVoidToUndefined,
     unminifyInfinity,
+    flipComparisons,
 }
 
 export type TransformOptions = {
