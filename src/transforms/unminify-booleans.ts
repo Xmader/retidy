@@ -2,6 +2,10 @@
 import VisitorWrapper from "../utils/visitor-wrapper"
 import { NumericLiteral, booleanLiteral, isNumericLiteral } from "@babel/types"
 
+/**
+ * `!0` -> `true`, `!1` -> `false`
+ * @see https://babeljs.io/docs/en/babel-plugin-transform-minify-booleans (reversed)
+ */
 export const unminifyBooleans = VisitorWrapper({
     UnaryExpression(path) {
         const { node } = path
