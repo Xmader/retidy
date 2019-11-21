@@ -1,13 +1,16 @@
 
+import { AST } from "../utils/ast"
+
 import unminifyNumericLiterals from "./unminify-numeric-literals"
 import unminifyBooleans from "./unminify-booleans"
 import transformVoidToUndefined from "./transform-void-to-undefined"
-import { AST } from "../utils/ast"
+import unminifyInfinity from "./unminify-infinity"
 
 export const allTransformers = {
     unminifyNumericLiterals,
     unminifyBooleans,
     transformVoidToUndefined,
+    unminifyInfinity,
 }
 
 export type TransformOptions = {
@@ -15,7 +18,7 @@ export type TransformOptions = {
 }
 
 const defaultTransformOptions: TransformOptions = {
-    
+
 }
 
 export const transformAll = (ast: AST, options?: TransformOptions) => {
