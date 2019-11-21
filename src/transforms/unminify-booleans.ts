@@ -1,8 +1,8 @@
 
-import VisitorWrapper from "./utils/visitor-wrapper"
+import VisitorWrapper from "../utils/visitor-wrapper"
 import { NumericLiteral, booleanLiteral, isNumericLiteral } from "@babel/types"
 
-export const UnminifyBooleans = VisitorWrapper({
+export const unminifyBooleans = VisitorWrapper({
     UnaryExpression(path) {
         const { node } = path
 
@@ -22,4 +22,4 @@ export const UnminifyBooleans = VisitorWrapper({
     },
 })
 
-export default UnminifyBooleans
+export default unminifyBooleans

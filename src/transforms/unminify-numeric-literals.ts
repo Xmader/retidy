@@ -1,7 +1,7 @@
 
-import VisitorWrapper from "./utils/visitor-wrapper"
+import VisitorWrapper from "../utils/visitor-wrapper"
 
-export const UnminifyNumericLiterals = VisitorWrapper({
+export const unminifyNumericLiterals = VisitorWrapper({
     NumericLiteral(path) {
         const { node } = path
 
@@ -13,4 +13,4 @@ export const UnminifyNumericLiterals = VisitorWrapper({
     }
 })
 
-export default UnminifyNumericLiterals
+export default unminifyNumericLiterals
