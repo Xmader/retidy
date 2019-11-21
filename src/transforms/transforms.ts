@@ -6,6 +6,7 @@ import unminifyBooleans from "./unminify-booleans"
 import transformVoidToUndefined from "./transform-void-to-undefined"
 import unminifyInfinity from "./unminify-infinity"
 import flipComparisons from "./flip-comparisons-again"
+import unminifyVariableDeclarations from "./unminify-variable-declarations"
 
 export const allTransformers = {
     unminifyNumericLiterals,
@@ -13,6 +14,7 @@ export const allTransformers = {
     transformVoidToUndefined,
     unminifyInfinity,
     flipComparisons,
+    unminifyVariableDeclarations,
 }
 
 export type TransformOptions = {
