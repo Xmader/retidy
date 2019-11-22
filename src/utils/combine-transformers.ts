@@ -1,5 +1,5 @@
 
-import { VisitNodeFunction, VisitNodeObject } from "@babel/traverse"
+import { VisitNodeFunction } from "@babel/traverse"
 import { Node } from "@babel/types"
 
 import { Transformer, Visitor, StrictVisitor, VisitorWrapper } from "./visitor-wrapper"
@@ -49,27 +49,27 @@ export const combineVisitors = (...visitors: Visitor[]) => {
 
     visitObjectMap.forEach((visitNodeObjectE, visitNodeType) => {
 
-        const combinedVisitNodeObject: VisitNodeObject<Node, Extract<Node, { type: typeof visitNodeType; }>> = {}
+        // const combinedVisitNodeObject: VisitNodeObject<Node, Extract<Node, { type: typeof visitNodeType; }>> = {}
 
-        for (const type of (["enter", "exit"] as ["enter", "exit"])) {
-            if (visitNodeObjectE[type].length > 0) {
-                if (visitNodeObjectE[type].length == 1) {
-                    combinedVisitNodeObject[type] = visitNodeObjectE[type][0]
-                } else {
-                    combinedVisitNodeObject[type] = function (path, state) {
-                        visitNodeObjectE[type].forEach((fn) => {
-                            fn = fn.bind(this)
-                            // @ts-ignore
-                            fn(path, state)
-                        })
-                    }
-                }
-            }
-        }
+        // for (const type of (["enter", "exit"] as ["enter", "exit"])) {
+        //     if (visitNodeObjectE[type].length > 0) {
+        //         if (visitNodeObjectE[type].length == 1) {
+        //             combinedVisitNodeObject[type] = visitNodeObjectE[type][0]
+        //         } else {
+        //             combinedVisitNodeObject[type] = function (path, state) {
+        //                 visitNodeObjectE[type].forEach((fn) => {
+        //                     fn = fn.bind(this)
+        //                     // @ts-ignore
+        //                     fn(path, state)
+        //                 })
+        //             }
+        //         }
+        //     }
+        // }
 
 
         // @ts-ignore
-        combinedVisitor[visitNodeType] = combinedVisitNodeObject
+        combinedVisitor[visitNodeType] = visitNodeObjectE
 
     })
 
@@ -77,7 +77,7 @@ export const combineVisitors = (...visitors: Visitor[]) => {
 }
 
 export const combineTransformers = (...transformers: Transformer[]) => {
-    const visitors = transformers.map((t)=>{
+    const visitors = transformers.map((t) => {
         return t.visitor
     })
     const combinedVisitor = combineVisitors(...visitors)
