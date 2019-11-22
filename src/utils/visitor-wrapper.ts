@@ -1,8 +1,10 @@
 
-import traverse, { TraverseOptions } from "@babel/traverse"
+import traverse, { TraverseOptions, VisitNodeObject, Visitor as BVisitor } from "@babel/traverse"
+import { Node } from "@babel/types"
 import { AST } from "./ast"
 
 export { TraverseOptions }
+export type StrictVisitor<S = Node> = Omit<BVisitor<S>, keyof VisitNodeObject<S, Node>>
 export type Visitor = TraverseOptions
 
 export interface Transformer {

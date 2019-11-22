@@ -8,6 +8,8 @@ import unminifyInfinity from "./unminify-infinity"
 import flipComparisons from "./flip-comparisons-again"
 import unminifyVariableDeclarations from "./unminify-variable-declarations"
 
+import { combineTransformers } from "../utils/combine-transformers"
+
 export const allTransformers = {
     unminifyNumericLiterals,
     unminifyBooleans,
@@ -28,11 +30,15 @@ const defaultTransformOptions: TransformOptions = {
 export const transformAll = (ast: AST, options?: TransformOptions) => {
     options = Object.assign({}, defaultTransformOptions, options)
 
-    Object.entries(allTransformers).forEach(([name, fn]) => {
+    const transformers = Object.entries(allTransformers).map(([name, fn]) => {
         if (!(options && typeof options !== "undefined" && options[name] === false)) {  // ignore undefined
-            fn(ast)
+            return fn
         }
     })
+
+    const combinedTransformer = combineTransformers(...transformers)
+    combinedTransformer(ast)
+
     return ast
 }
 
