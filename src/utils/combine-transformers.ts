@@ -3,6 +3,7 @@ import { VisitNodeFunction } from "@babel/traverse"
 import { Node } from "@babel/types"
 
 import { Transformer, Visitor, StrictVisitor, VisitorWrapper } from "./visitor-wrapper"
+import toArray from "../utils/to-array"
 
 type VisitNodeObjectE<S, P> = {
     enter?: VisitNodeFunction<S, P>[];
@@ -33,11 +34,11 @@ export const combineVisitors = (...visitors: Visitor[]) => {
                     enter.push(visitNodeObject)
                 } else {
                     if (visitNodeObject.enter) {
-                        enter.push(visitNodeObject.enter)
+                        enter.push(...toArray(visitNodeObject.enter))
                     }
 
                     if (visitNodeObject.exit) {
-                        exit.push(visitNodeObject.exit)
+                        exit.push(...toArray(visitNodeObject.exit))
                     }
                 }
 
