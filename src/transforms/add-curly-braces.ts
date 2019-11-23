@@ -1,6 +1,6 @@
 
 import VisitorWrapper from "../utils/visitor-wrapper"
-import { isBlockStatement, blockStatement } from "@babel/types"
+import { isBlockStatement, blockStatement, isIfStatement } from "@babel/types"
 
 /**
  * `if (a == 1) a++` -> `if (a == 1) { a++ }`
@@ -22,7 +22,7 @@ export const addCurlyBraces = VisitorWrapper({
             node.consequent = blockStatement([node.consequent])
         }
 
-        if (node.alternate && !isBlockStatement(node.alternate)) {
+        if (node.alternate && !isBlockStatement(node.alternate) && !isIfStatement(node.alternate)) {
             node.alternate = blockStatement([node.alternate])
         }
     },
