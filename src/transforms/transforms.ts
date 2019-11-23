@@ -8,6 +8,7 @@ import unminifyInfinity from "./unminify-infinity"
 import flipComparisons from "./flip-comparisons-again"
 import unminifyVariableDeclarations from "./unminify-variable-declarations"
 import addCurlyBraces from "./add-curly-braces"
+import addParenthesesForBinaryExpressions from "./add-parentheses-for-binary-expressions"
 
 import { combineTransformers } from "../utils/combine-transformers"
 
@@ -19,6 +20,7 @@ export const allTransformers = {
     flipComparisons,
     unminifyVariableDeclarations,
     addCurlyBraces,
+    addParenthesesForBinaryExpressions,
 }
 
 export type TransformOptions = {
