@@ -7,6 +7,7 @@ import transformVoidToUndefined from "./transform-void-to-undefined"
 import unminifyInfinity from "./unminify-infinity"
 import flipComparisons from "./flip-comparisons-again"
 import unminifyVariableDeclarations from "./unminify-variable-declarations"
+import addCurlyBraces from "./add-curly-braces"
 
 import { combineTransformers } from "../utils/combine-transformers"
 
@@ -17,6 +18,7 @@ export const allTransformers = {
     unminifyInfinity,
     flipComparisons,
     unminifyVariableDeclarations,
+    addCurlyBraces,
 }
 
 export type TransformOptions = {
