@@ -21,6 +21,10 @@ export const addCurlyBraces = VisitorWrapper({
         if (!isBlockStatement(node.consequent)) {
             node.consequent = blockStatement([node.consequent])
         }
+
+        if (node.alternate && !isBlockStatement(node.alternate)) {
+            node.alternate = blockStatement([node.alternate])
+        }
     },
 })
 
