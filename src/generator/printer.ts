@@ -73,7 +73,7 @@ export class Printer {
         this.config = config
     }
 
-    print(ast): PrintResultType {
+    print(ast: types.ASTNode): PrintResultType {
         if (!ast) {
             return emptyPrintResult
         }
@@ -95,7 +95,7 @@ export class Printer {
         )
     }
 
-    printGenerically(ast): PrintResultType {
+    printGenerically(ast: types.ASTNode): PrintResultType {
         if (!ast) {
             return emptyPrintResult
         }
@@ -242,7 +242,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             // Babel 6
             if (n.directives) {
                 path.each(function (childPath: any) {
-                    parts.push(print(childPath), ";\n")
+                    parts.push(print(childPath), "\n")
                 }, "directives")
             }
 
@@ -259,7 +259,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             return fromString("")
 
         case "ExpressionStatement":
-            return concat([path.call(print, "expression"), ";"])
+            return concat([path.call(print, "expression")])
 
         case "ParenthesizedExpression": // Babel extension.
             return concat(["(", path.call(print, "expression"), ")"])
@@ -512,7 +512,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             parts.push(
                 " from ",
                 path.call(print, "source"),
-                ";"
             )
 
             return concat(parts)
@@ -587,7 +586,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 parts.push(" from ")
             }
 
-            parts.push(path.call(print, "source"), ";")
+            parts.push(path.call(print, "source"))
 
             return concat(parts)
         }
@@ -635,8 +634,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                     parts.push(" ", argLines)
                 }
             }
-
-            parts.push(";")
 
             return concat(parts)
 
@@ -975,18 +972,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 parts.push(printed1[0])
             }
 
-            // We generally want to terminate all variable declarations with a
-            // semicolon, except when they are children of for loops.
-            var parentNode = path.getParentNode()
-            if (!namedTypes.ForStatement.check(parentNode) &&
-                !namedTypes.ForInStatement.check(parentNode) &&
-                !(namedTypes.ForOfStatement &&
-                    namedTypes.ForOfStatement.check(parentNode)) &&
-                !(namedTypes.ForAwaitStatement &&
-                    namedTypes.ForAwaitStatement.check(parentNode))) {
-                parts.push(";")
-            }
-
             return concat(parts)
 
         case "VariableDeclarator":
@@ -1089,7 +1074,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             else
                 parts.push("\nwhile")
 
-            parts.push(" (", path.call(print, "test"), ");")
+            parts.push(" (", path.call(print, "test"), ")")
 
             return concat(parts)
 
@@ -1106,14 +1091,12 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             parts.push("break")
             if (n.label)
                 parts.push(" ", path.call(print, "label"))
-            parts.push(";")
             return concat(parts)
 
         case "ContinueStatement":
             parts.push("continue")
             if (n.label)
                 parts.push(" ", path.call(print, "label"))
-            parts.push(";")
             return concat(parts)
 
         case "LabeledStatement":
@@ -1164,7 +1147,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             return concat(parts)
 
         case "ThrowStatement":
-            return concat(["throw ", path.call(print, "argument"), ";"])
+            return concat(["throw ", path.call(print, "argument")])
 
         case "SwitchStatement":
             return concat([
@@ -1189,7 +1172,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             return concat(parts)
 
         case "DebuggerStatement":
-            return fromString("debugger;")
+            return fromString("debugger")
 
         // JSX extensions below.
         case "JSXAttribute":
@@ -1376,7 +1359,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 parts.push(" = ", path.call(print, "value"))
             }
 
-            parts.push(";")
             return concat(parts)
 
         case "ClassPrivateProperty":
@@ -1394,7 +1376,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 parts.push(" = ", path.call(print, "value"))
             }
 
-            parts.push(";")
             return concat(parts)
 
         case "ClassDeclaration":
@@ -1605,8 +1586,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
         case "DeclareFunction":
             return printFlowDeclaration(path, [
                 "function ",
-                path.call(print, "id"),
-                ";"
+                path.call(print, "id")
             ])
 
         case "DeclareModule":
@@ -1627,7 +1607,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             return printFlowDeclaration(path, [
                 "var ",
                 path.call(print, "id"),
-                ";"
             ])
 
         case "DeclareExportDeclaration":
@@ -1814,7 +1793,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 path.call(print, "typeParameters"),
                 " = ",
                 path.call(print, "right"),
-                ";"
             ])
 
         case "DeclareOpaqueType":
@@ -1834,8 +1812,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             if (n["impltype"]) {
                 parts.push(" = ", path.call(print, "impltype"))
             }
-
-            parts.push(";")
 
             return concat(parts)
 
@@ -2263,7 +2239,6 @@ function genericPrintNoParens(path: any, options: any, print: any) {
                 path.call(print, "typeParameters"),
                 " = ",
                 path.call(print, "typeAnnotation"),
-                ";"
             ])
 
         case "TSTypeParameter":
@@ -2969,6 +2944,6 @@ function nodeStr(str: string, options: any) {
 function maybeAddSemicolon(lines: any) {
     const eoc = lastNonSpaceCharacter(lines)
     if (!eoc || "\n};".indexOf(eoc) < 0)
-        return concat([lines, ";"])
+        return concat([lines])
     return lines
 }
