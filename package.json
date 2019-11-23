@@ -23,10 +23,10 @@
     "reverse engineer"
   ],
   "dependencies": {
-    "@babel/generator": "^7.7.2",
     "@babel/parser": "^7.7.3",
     "@babel/traverse": "^7.7.2",
-    "@babel/types": "^7.7.2"
+    "@babel/types": "^7.7.2",
+    "recast": "^0.18.5"
   },
   "devDependencies": {
     "@types/babel__generator": "^7.6.0",
