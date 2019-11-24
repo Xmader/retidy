@@ -11,6 +11,7 @@ import addCurlyBraces from "./add-curly-braces"
 import addParenthesesForBinaryExpressions from "./add-parentheses-for-binary-expressions"
 import unminifyReturnStatement from "./unminify-return-statements"
 import unminifyReturnVoid from "./unminify-return-void"
+import unminifyIfStatements from "./unminify-if-statements"
 
 import { combineTransformers } from "../utils/combine-transformers"
 
@@ -21,9 +22,10 @@ export const allTransformers = {
     unminifyInfinity,
     flipComparisons,
     unminifyVariableDeclarations,
-    addCurlyBraces,
     unminifyReturnStatement,
     unminifyReturnVoid,
+    unminifyIfStatements,
+    addCurlyBraces,
     addParenthesesForBinaryExpressions,
 }
 
