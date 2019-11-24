@@ -11,6 +11,7 @@ const defaultOptions = {
         arrays: false,
         parameters: false,
     },
+    arrowParensAlways: true,
 }
 
 export const prettyPrint = (ast: Node, options?: Options) => {
