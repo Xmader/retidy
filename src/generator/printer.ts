@@ -35,7 +35,7 @@ export interface PrintResultType {
     toString(): string
 }
 
-class PrintResult implements PrintResultType {
+export class PrintResult implements PrintResultType {
 
     code: string
 
@@ -132,7 +132,9 @@ export class Printer {
         // when printing generically.
         this.config.reuseWhitespace = false
 
-        const lines = printGenerically(path).toString(this.config).split("\n")
+        const EOL = this.config && this.config.lineTerminator || "\n"
+
+        const lines = printGenerically(path).toString(this.config).split(EOL)
         const code = lines.map((l, index) => {
             const previousLine = lines[index - 1]
 
@@ -143,12 +145,12 @@ export class Printer {
                 && !previousLine.endsWith(";")
             ) {
                 // add prefix ";" to each line starts with "(" or "["
-                l = l.replace(addSemicolonRegex, "$1;\n$1$2")
+                l = l.replace(addSemicolonRegex, `$1;${EOL}$1$2`)
             }
 
             // clean up for not adding ";" prefix in template strings
             return l.replace("\uFFFF", "")
-        }).join("\n")
+        }).join(EOL)
 
         // TODO Allow printing of comments?
         const pr = new PrintResult(code)

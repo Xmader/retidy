@@ -1,6 +1,6 @@
 
-import { Printer } from "./printer"
-import { Node } from "@babel/types"
+import { Printer, PrintResult, PrintResultType } from "./printer"
+import { AST } from "../utils/ast"
 import { Options } from "recast/lib/options"
 
 const defaultOptions = {
@@ -14,8 +14,18 @@ const defaultOptions = {
     arrowParensAlways: true,
 }
 
-export const prettyPrint = (ast: Node, options?: Options) => {
+export const prettyPrint = (ast: AST, options?: Options): PrintResultType => {
     options = Object.assign({}, defaultOptions, options || {})
+
+    if (Array.isArray(ast)) {
+        const sep = options.lineTerminator.repeat(2)  // \n\n
+        return new PrintResult(
+            ast.map((n) => {
+                return prettyPrint(n, options).code
+            }).join(sep)
+        )
+    }
+
     return new Printer(options).printGenerically(ast)
 }
 
