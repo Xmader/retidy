@@ -144,7 +144,8 @@ export class Printer {
                 l = l.replace(addSemicolonRegex, "$1;$2")
             }
 
-            return l
+            // clean up for not adding ";" prefix in template strings
+            return l.replace("\uFFFF", "")
         }).join("\n")
 
         // TODO Allow printing of comments?
@@ -1454,7 +1455,10 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             return concat(parts)
 
         case "TemplateElement":
-            return fromString(n.value.raw, options).lockIndentTail()
+            return fromString(
+                n.value.raw.replace(addSemicolonRegex, "$1\uFFFF$2"),  // don't add ";" prefix in template strings
+                options
+            ).lockIndentTail()
 
         case "TemplateLiteral":
             var expressions = path.map(print, "expressions")
