@@ -12,6 +12,7 @@ import addParenthesesForBinaryExpressions from "./add-parentheses-for-binary-exp
 import unminifyReturnStatement from "./unminify-return-statements"
 import unminifyReturnVoid from "./unminify-return-void"
 import unminifyIfStatements from "./unminify-if-statements"
+import unminifySequenceExpressions from "./unminify-sequence-expressions"
 
 import { combineTransformers } from "../utils/combine-transformers"
 
@@ -24,6 +25,7 @@ export const allTransformers = {
     unminifyVariableDeclarations,
     unminifyReturnStatement,
     unminifyReturnVoid,
+    unminifySequenceExpressions,
     unminifyIfStatements,
     addCurlyBraces,
     addParenthesesForBinaryExpressions,
