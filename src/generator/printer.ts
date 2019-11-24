@@ -1,4 +1,6 @@
-// modify from https://github.com/benjamn/recast/blob/master/lib/options.ts
+
+// modify from recast's code printer (generator)
+// https://github.com/benjamn/recast/blob/master/lib/printer.ts
 
 import assert from "assert"
 import { printComments } from "recast/lib/comments"
