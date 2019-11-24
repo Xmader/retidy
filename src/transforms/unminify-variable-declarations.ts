@@ -1,15 +1,20 @@
 
 import VisitorWrapper from "../utils/visitor-wrapper"
-import { variableDeclaration } from "@babel/types"
+import { variableDeclaration, isFor, isVariableDeclaration } from "@babel/types"
 
 /**
  * @see https://babeljs.io/docs/en/babel-plugin-transform-merge-sibling-variables (reversed)
  * @see https://github.com/babel/minify/blob/master/packages/babel-plugin-minify-infinity/src/index.js
  */
 export const unminifyVariableDeclarations = VisitorWrapper({
+
     VariableDeclaration(path) {
         const { node } = path
         const { declarations } = node
+
+        if (path.parent && isFor(path.parent)) {
+            return
+        }
 
         if (declarations.length > 1) {
             path.replaceWithMultiple(
@@ -21,6 +26,23 @@ export const unminifyVariableDeclarations = VisitorWrapper({
             )
         }
     },
+
+    ForStatement(path) {
+        const { node } = path
+
+        if (isVariableDeclaration(node.init)) {
+            const { declarations } = node.init
+
+            if (declarations.length > 1) {
+                node.init.declarations = [declarations.pop()]
+
+                path.insertBefore(
+                    variableDeclaration(node.init.kind, declarations)
+                )
+            }
+        }
+    },
+
 })
 
 export default unminifyVariableDeclarations
