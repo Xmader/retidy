@@ -23,7 +23,7 @@
 ```js
 import { transformAll } from "retidy/dist/transforms"
 
-transformAll(ast[, options])
+transformAll(ast[, options[, extraTransformers]])
 ```
 
 ### Disable specific transformer(s)

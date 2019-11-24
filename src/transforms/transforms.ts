@@ -14,6 +14,7 @@ import unminifyReturnVoid from "./unminify-return-void"
 import unminifyIfStatements from "./unminify-if-statements"
 import unminifySequenceExpressions from "./unminify-sequence-expressions"
 
+import { Transformer } from "../utils/visitor-wrapper"
 import { combineTransformers } from "../utils/combine-transformers"
 
 export const allTransformers = {
@@ -39,7 +40,7 @@ const defaultTransformOptions: TransformOptions = {
 
 }
 
-export const transformAll = (ast: AST, options?: TransformOptions) => {
+export const transformAll = (ast: AST, options?: TransformOptions, extraTransformers?: Transformer[]) => {
     options = Object.assign({}, defaultTransformOptions, options)
 
     const transformers = Object.entries(allTransformers).map(([name, fn]) => {
@@ -47,6 +48,14 @@ export const transformAll = (ast: AST, options?: TransformOptions) => {
             return fn
         }
     })
+
+    if (extraTransformers && Array.isArray(extraTransformers)) {
+        if (!extraTransformers.every(f => typeof f == "function" && f.visitor)) {
+            throw new TypeError("some or all of the extraTransformers are not instances of Transformer")
+        }
+
+        transformers.push(...extraTransformers)
+    }
 
     const combinedTransformer = combineTransformers(...transformers)
     combinedTransformer(ast)
