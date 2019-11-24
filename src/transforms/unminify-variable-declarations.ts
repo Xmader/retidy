@@ -30,7 +30,7 @@ export const unminifyVariableDeclarations = VisitorWrapper({
     ForStatement(path) {
         const { node } = path
 
-        if (isVariableDeclaration(node.init)) {
+        if (isVariableDeclaration(node.init) && node.init.kind == "var") {
             const { declarations } = node.init
 
             if (declarations.length > 1) {
