@@ -130,10 +130,22 @@ export class Printer {
         // when printing generically.
         this.config.reuseWhitespace = false
 
-        let code = printGenerically(path).toString(this.config)
+        const lines = printGenerically(path).toString(this.config).split("\n")
+        const code = lines.map((l, index) => {
+            const previousLine = lines[index - 1]
 
-        // add prefix ";" to each line starts with "(" or "["
-        code = code.replace(addSemicolonRegex, "$1;$2")
+            if (typeof previousLine == "string"
+                && !previousLine.endsWith("(")
+                && !previousLine.endsWith("{")
+                && !previousLine.endsWith("[")
+                && !previousLine.endsWith(";")
+            ) {
+                // add prefix ";" to each line starts with "(" or "["
+                l = l.replace(addSemicolonRegex, "$1;$2")
+            }
+
+            return l
+        }).join("\n")
 
         // TODO Allow printing of comments?
         const pr = new PrintResult(code)
