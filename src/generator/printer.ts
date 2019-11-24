@@ -141,7 +141,7 @@ export class Printer {
                 && !previousLine.endsWith(";")
             ) {
                 // add prefix ";" to each line starts with "(" or "["
-                l = l.replace(addSemicolonRegex, "$1;$2")
+                l = l.replace(addSemicolonRegex, "$1;\n$1$2")
             }
 
             // clean up for not adding ";" prefix in template strings
