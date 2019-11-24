@@ -29,7 +29,6 @@
     "recast": "^0.18.5"
   },
   "devDependencies": {
-    "@types/babel__generator": "^7.6.0",
     "@types/babel__traverse": "^7.0.8",
     "@types/node": "^12.12.11",
     "typescript": "^3.5.2"
