@@ -9,6 +9,7 @@
 * [no trailing semicolons](https://github.com/Xmader/retidy/commit/db7049988)
 * add [default options](./generator.ts#L6)
 * support multiple ASTs (AST array) input
+* standalone generator, only depends on `ast-types`
 
 ## Usage
 

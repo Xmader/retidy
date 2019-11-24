@@ -1,9 +1,9 @@
 
 import { Printer, PrintResult, PrintResultType } from "./printer"
 import { AST } from "../utils/ast"
-import { Options } from "recast/lib/options"
+import { Options } from "./options"
 
-const defaultOptions = {
+const defaultOptions: Options = {
     lineTerminator: "\n",
     quote: "double",
     trailingComma: {

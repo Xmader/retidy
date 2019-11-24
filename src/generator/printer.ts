@@ -3,16 +3,16 @@
 // https://github.com/benjamn/recast/blob/master/lib/printer.ts
 
 import assert from "assert"
-import { printComments } from "recast/lib/comments"
-import { Lines, fromString, concat } from "recast/lib/lines"
-import { normalize as normalizeOptions, Options } from "recast/lib/options"
-import { getReprinter } from "recast/lib/patcher"
+import { printComments } from "./comments"
+import { Lines, fromString, concat } from "./lines"
+import { normalize as normalizeOptions, Options } from "./options"
+import { getReprinter } from "./patcher"
 import * as types from "ast-types"
 const namedTypes = types.namedTypes
 const isString = types.builtInTypes.string
 const isObject = types.builtInTypes.object
-import FastPath from "recast/lib/fast-path"
-import * as util from "recast/lib/util"
+import FastPath from "./fast-path"
+import * as util from "./util"
 
 interface LineInfo {
     line: string;
@@ -82,34 +82,7 @@ export class Printer {
 
         config = normalizeOptions(config)
 
-        // It's common for client code to pass the same options into both
-        // recast.parse and recast.print, but the Printer doesn't need (and
-        // can be confused by) config.sourceFileName, so we null it out.
-        config.sourceFileName = null
-
         this.config = config
-    }
-
-    print(ast: types.ASTNode): PrintResultType {
-        if (!ast) {
-            return emptyPrintResult
-        }
-
-        const lines = this._print(FastPath.from(ast), {
-            includeComments: true,
-            avoidRootParens: false
-        })
-
-        return new PrintResult(
-            lines.toString(this.config),
-            util.composeSourceMaps(
-                this.config.inputSourceMap,
-                lines.getSourceMap(
-                    this.config.sourceMapName,
-                    this.config.sourceRoot
-                )
-            )
-        )
     }
 
     printGenerically(ast: types.ASTNode): PrintResultType {
