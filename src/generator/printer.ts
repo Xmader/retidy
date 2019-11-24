@@ -12,6 +12,21 @@ const isObject = types.builtInTypes.object
 import FastPath from "recast/lib/fast-path"
 import * as util from "recast/lib/util"
 
+interface LineInfo {
+    line: string;
+    indent: number;
+    locked: boolean;
+    sliceStart: number;
+    sliceEnd: number;
+}
+
+// @ts-ignore
+interface ResultInfo extends Lines {
+    infos: LineInfo[]
+}
+
+const addSemicolonRegex = /^(\s*)([([])/mg
+
 export interface PrintResultType {
     code: string
     map?: object
@@ -101,7 +116,7 @@ export class Printer {
         }
 
         // Print the entire AST generically.
-        const printGenerically = (path: any) => {
+        const printGenerically = (path: any): ResultInfo => {
             return printComments(path, (path: any) => genericPrint(path, this.config, {
                 includeComments: true,
                 avoidRootParens: false
@@ -115,8 +130,13 @@ export class Printer {
         // when printing generically.
         this.config.reuseWhitespace = false
 
+        let code = printGenerically(path).toString(this.config)
+
+        // add prefix ";" to each line starts with "(" or "["
+        code = code.replace(addSemicolonRegex, "$1;$2")
+
         // TODO Allow printing of comments?
-        const pr = new PrintResult(printGenerically(path).toString(this.config))
+        const pr = new PrintResult(code)
         this.config.reuseWhitespace = oldReuseWhitespace
         return pr
     }
