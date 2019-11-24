@@ -370,9 +370,10 @@ function genericPrintNoParens(path: any, options: any, print: any) {
             if (n.generator)
                 parts.push("*")
 
+            parts.push(" ")
+
             if (n.id) {
                 parts.push(
-                    " ",
                     path.call(print, "id"),
                     path.call(print, "typeParameters")
                 )
