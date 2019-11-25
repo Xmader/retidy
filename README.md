@@ -1,7 +1,7 @@
 
 # Retidy
 
-[![GitHub stars](https://img.shields.io/github/stars/Xmader/retidy?style=flat)](https://github.com/Xmader/retidy) [![npm](https://img.shields.io/npm/v/Xmader/retidy)](https://www.npmjs.com/package/retidy) ![npm downloads](https://img.shields.io/npm/dm/Xmader/retidy) ![](https://img.shields.io/badge/types-Typescript-blue) [![license](https://img.shields.io/github/license/Xmader/retidy)](/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Xmader/retidy?style=flat)](https://github.com/Xmader/retidy) [![npm](https://img.shields.io/npm/v/retidy)](https://www.npmjs.com/package/retidy) ![npm downloads](https://img.shields.io/npm/dm/retidy) ![](https://img.shields.io/badge/types-Typescript-blue) [![license](https://img.shields.io/github/license/Xmader/retidy)](/LICENSE)
 
 > Extract, unminify, and beautify (\"retidy\") each file from a webpack/parcel bundle
 
