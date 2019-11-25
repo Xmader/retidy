@@ -15,5 +15,9 @@
         "pretty": true,
         "newLine": "LF",
         "downlevelIteration": true,
-    }
+    },
+    "include": [
+        "src/*",
+        "src/**/*.json"
+    ],
 }

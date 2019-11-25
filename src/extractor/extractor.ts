@@ -7,7 +7,7 @@ import webpackExtractor from "./webpack/webpack-extractor"
 
 export const allExtractors = {
     "parcel": parcelExtractor,
-    "parcel-v1": parcelExtractor,  // alias
+    // "parcel-v1": parcelExtractor,  // alias
     // "parcel-v2": parcelV2Extractor,  // parcel v2 is unreleased
     "webpack": webpackExtractor,
 }

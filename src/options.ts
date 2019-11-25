@@ -5,13 +5,16 @@ import { ModuleId } from "./extractor/module"
 import { Options as generatorOptions } from "./generator/options"
 
 export interface Options {
-    /** default: "webpack" */
+    /** 
+     * bundle type  
+     * @default "webpack"
+     */
     type?: keyof typeof allExtractors;
 
     /** output files, otherwise only return "retidied" codes */
     writeFiles?: boolean;
 
-    /** default: "retidy-out" */
+    /** @default "retidy-out" */
     outDir?: string;
 
     transformerOptions?: TransformOptions;
@@ -22,7 +25,7 @@ export interface Options {
     /** 
      * webpack only  
      * a reference to the bundle ast (to the webpackBootstrap function call ast)
-     * default: ["body", 0, "expression", "argument"]
+     * @default ["body", 0, "expression", "argument"]
      */
     bundleAstReferenceKeys?: (string | number)[];
 
@@ -37,10 +40,10 @@ export interface Options {
     replaceModuleFunctionParams?: boolean;
 }
 
-const defaultOptions: Options = {
+export const defaultOptions: Options = {
     type: "webpack",
     writeFiles: true,
-    outDir: "retidy-out",
+    outDir: "./retidy-out/",
     bundleAstReferenceKeys: ["body", 0, "expression", "argument"],  // !function(modules){…
     replaceModuleFunctionParams: false,
 }
