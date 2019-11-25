@@ -19,6 +19,8 @@ retidy(bundleCode[, options])
 retidy(bundleCode: string, options?: Options): Promise<string[]>
 ```
 
+If set `options.writeFiles = true` (by default), retidy will write extracted code files into the file system (under `options.outDir` directory, `./retidy-out/` by default).
+
 ## Options
 
 see [src/options.ts](src/options.ts#L7)
@@ -31,7 +33,7 @@ import fs from "fs"
 
 const code = fs.readFileSync("path/to/webpack-bundle.js", "utf-8")
 
-retidy(code, { type: "webpack", bundleAstReferenceKeys: ["body", 0, "expression", "right"] })
+retidy(code, { type: "webpack", outDir: "./out/", bundleAstReferenceKeys: ["body", 0, "expression", "right"] })
 ```
 
 ## License
