@@ -18,6 +18,10 @@ export interface Options {
     outDir?: string;
 
     transformerOptions?: TransformOptions;
+    /**
+     * extra transformers that run before any other transformers  
+     * some extractors may add them by editing the options
+     */
     extraTransformers?: Transformer[];
 
     generatorOptions?: generatorOptions;
@@ -33,9 +37,9 @@ export interface Options {
     entryPoint?: ModuleId;
 
     /** 
-     * webpack only, unusable  
-     * (replaceModuleTopLevelVars)   
-     * `function(t,e,n) { module body… }` -> `function(module, exports, __webpack_require__) { module body… }`
+     * webpack only  
+     * Transform variables defined in ModuleFunction params to their real values  
+     * @see https://github.com/Xmader/retidy/blob/master/src/extractor/webpack/transformer.ts#L6
      */
     replaceModuleFunctionParams?: boolean;
 }
@@ -45,7 +49,7 @@ export const defaultOptions: Options = {
     writeFiles: true,
     outDir: "./retidy-out/",
     bundleAstReferenceKeys: ["body", 0, "expression", "argument"],  // !function(modules){…
-    replaceModuleFunctionParams: false,
+    replaceModuleFunctionParams: true,
 }
 
 export const normalizeOptions = (options?: Options): Options => {

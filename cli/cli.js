@@ -38,6 +38,12 @@ const argv = yargs.scriptName(name).usage(usage).options({
         default: defaultOptions.bundleAstReferenceKeys,
         describe: "a reference to the bundle ast \n(to the webpackBootstrap function call ast)\n(webpack only)",
     },
+    "r": {
+        alias: ["replace-module-function-params"],
+        type: "boolean",
+        default: defaultOptions.replaceModuleFunctionParams,
+        describe: "(webpack only) Transform variables defined in ModuleFunction params to their real values  "
+    }
 }).version().help().wrap(yargs.terminalWidth()).argv
 
 const code = readFileSync(argv["i"], "utf-8")
@@ -46,5 +52,6 @@ retidy(code, {
     type: argv["t"],
     outDir: argv["o"],
     bundleAstReferenceKeys: argv["bundle-ast-reference"],
+    replaceModuleFunctionParams: argv["r"],
 })
 

@@ -43,11 +43,7 @@ const defaultTransformOptions: TransformOptions = {
 export const transformAll = (ast: AST, options?: TransformOptions, extraTransformers?: Transformer[]) => {
     options = Object.assign({}, defaultTransformOptions, options)
 
-    const transformers = Object.entries(allTransformers).map(([name, fn]) => {
-        if (!(options && typeof options !== "undefined" && options[name] === false)) {  // ignore undefined
-            return fn
-        }
-    })
+    const transformers: Transformer[] = []
 
     if (extraTransformers && Array.isArray(extraTransformers)) {
         if (!extraTransformers.every(f => typeof f == "function" && f.visitor)) {
@@ -56,6 +52,12 @@ export const transformAll = (ast: AST, options?: TransformOptions, extraTransfor
 
         transformers.push(...extraTransformers)
     }
+
+    Object.entries(allTransformers).map(([name, fn]) => {
+        if (!(options && typeof options !== "undefined" && options[name] === false)) {  // ignore undefined
+            transformers.push(fn)
+        }
+    })
 
     const combinedTransformer = combineTransformers(...transformers)
     combinedTransformer(ast)

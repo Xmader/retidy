@@ -110,25 +110,24 @@ export const extractModules: Extractor = (ast, options) => {
 
         const modulePath = `${isEntry ? "entry_" : ""}${id}.ts`
 
-        if (!options.replaceModuleFunctionParams) {
-            // put module function params in module body 
-            // minified `function(e,t,n){`
-            // unminified `function(module, exports, __webpack_require__) {`
-            // -> `const e = module; const t = exports; const n = __webpack_require__;`
-            params.forEach((p, index) => {
-                if (!isIdentifier(p)) {
-                    throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
-                }
-                moduleAST.body.unshift(
-                    variableDeclaration("const", [variableDeclarator(
+        // put module function params in module body 
+        // minified `function(e,t,n){`
+        // unminified `function(module, exports, __webpack_require__) {`
+        // -> `const e = module, t = exports, n = __webpack_require__`
+        // -> `const e = module; const t = exports; const n = __webpack_require__;` (by transforms/unminify-variable-declarations.ts)
+        moduleAST.body.unshift(
+            variableDeclaration("const",
+                params.map((p, index) => {
+                    if (!isIdentifier(p)) {
+                        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+                    }
+                    return variableDeclarator(
                         identifier(p.name),
                         identifier(moduleFunctionParams[index])
-                    )])
-                )
-            })
-        } else {
-            // TODO
-        }
+                    )
+                })
+            )
+        )
 
         modules[modulePath] = {
             id,

@@ -1,6 +1,6 @@
 
 import { Extractor } from "./extractor-utils"
-import { Options, normalizeOptions } from "../options"
+import { Options } from "../options"
 
 import parcelExtractor from "./parcel/parcel-extractor"
 import webpackExtractor from "./webpack/webpack-extractor"
@@ -13,7 +13,7 @@ export const allExtractors = {
 }
 
 export const extractor: Extractor = (ast, options?: Options) => {
-    options = normalizeOptions(options)
+    // options = normalizeOptions(options)  // some extractors need to edit the options
     const singleExtractor: Extractor = allExtractors[options.type]
     return singleExtractor(ast, options)
 }
