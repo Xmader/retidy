@@ -7,6 +7,12 @@
 
 ⚠️ No Unit Tests, may have unexpected side effects ⚠️
 
+## Installation
+
+```sh
+npm install -g retidy
+```
+
 ## Usage
 
 ```js
