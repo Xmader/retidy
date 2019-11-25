@@ -2,16 +2,22 @@ import { TransformOptions } from "./transforms/transforms"
 import { Transformer } from "./utils/visitor-wrapper"
 import { allExtractors } from "./extractor/extractor"
 import { ModuleId } from "./extractor/module"
+import { Options as generatorOptions } from "./generator/options"
 
 export interface Options {
     /** default: "webpack" */
     type?: keyof typeof allExtractors;
+
+    /** output files, otherwise only return "retidied" codes */
+    writeFiles?: boolean;
 
     /** default: "retidy-out" */
     outDir?: string;
 
     transformerOptions?: TransformOptions;
     extraTransformers?: Transformer[];
+
+    generatorOptions?: generatorOptions;
 
     /** 
      * webpack only  
@@ -33,9 +39,10 @@ export interface Options {
 
 const defaultOptions: Options = {
     type: "webpack",
+    writeFiles: true,
     outDir: "retidy-out",
     bundleAstReferenceKeys: ["body", 0, "expression", "argument"],  // !function(modules){…
-    replaceModuleFunctionParams: true,
+    replaceModuleFunctionParams: false,
 }
 
 export const normalizeOptions = (options?: Options): Options => {

@@ -1,8 +1,8 @@
 
-import { Node } from "@babel/types"
+import { BlockStatement } from "@babel/types"
 
 export type ModuleId = number | string;  // e.g. 120 | "EwB5" 
-export type ModuleAST = Node
+export type ModuleAST = BlockStatement
 export interface Module {
     id?: ModuleId;
     ast: ModuleAST;
