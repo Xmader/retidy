@@ -94,10 +94,13 @@ export const extractModules: Extractor = (ast, options) => {
         }
     }
 
+    const entryID = options.entryPoint
+    const entryPath = `entry_${entryID}.ts`
+
     const modules: ModulesObj = {}
     const solveModule = (moduleFunction: FunctionExpression, id: ModuleId) => {
 
-        const isEntry = id == options.entryPoint
+        const isEntry = id == entryID
 
         // get module ast block
         if (!isFunctionExpression(moduleFunction)) {
@@ -157,6 +160,7 @@ export const extractModules: Extractor = (ast, options) => {
     return {
         modules: modules,
         entry: options.entryPoint,
+        entryPath: entryPath,
     }
 }
 

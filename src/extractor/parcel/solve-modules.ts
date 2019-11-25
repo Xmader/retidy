@@ -7,7 +7,7 @@ import { extname } from "path"
 import isRelativeModulePath from "../../utils/is-relative-module-path"
 
 const normalizeModulePath = (path: string) => {
-    let p = path.match(/^file:\/\/(.+)/)[1]
+    let p = path.match(/^file:\/\/(?:\.+\/)?(.+)/)[1]
     const e = extname(p)
     if (!e || !(e == ".js" || e == ".json" || e == ".jsx" || e == ".ts" || e == ".tsx")) {
         p += ".ts"
@@ -57,6 +57,7 @@ export const solveModules = (parcelExtracted: ParcelExtractedModules): ExtractRe
     return {
         modules,
         entry: entryId,
+        entryPath: "entry.ts"
     }
 }
 

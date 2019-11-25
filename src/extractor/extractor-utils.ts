@@ -26,6 +26,7 @@ export type ModulesMap = Map<string, Module>
 export interface ExtractResult {
     modules: ModulesObj | ModulesMap;
     entry?: ModuleId;
+    entryPath?: string;
 }
 
 export interface Extractor {
