@@ -68,3 +68,5 @@ package-lock.json
 dist
 
 retidy-out
+
+.github
