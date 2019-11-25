@@ -15,6 +15,24 @@ npm install -g retidy
 
 ## Usage
 
+### CLI
+
+```bash
+retidy \
+    -i <bundle_file> \
+    -o <out_dir> \
+    -t <bundle_type> \
+    -b <bundle_ast_reference>
+```
+
+see
+
+```bash
+retidy --help
+```
+
+### API
+
 ```js
 import retidy from "retidy"
 
