@@ -12,8 +12,8 @@ export const webpackExtractor: Extractor = (ast, options) => {
             options.extraTransformers = []
         }
         // Transform variables defined in ModuleFunction params to their real values
-        const { entry, entryPath } = extractResult
-        const transformer = getModuleFunctionParamsTransformer(entry, entryPath)
+        const { entry } = extractResult
+        const transformer = getModuleFunctionParamsTransformer(entry)
         options.extraTransformers.push(transformer)
     }
 

@@ -23,7 +23,7 @@ const REQUIRE_CALLEE = identifier("require")
  * replace `e` with `module`, `t` with `exports`, `n` -> `__webpack_require__` in extracted program body,  
  * and transform `__webpack_require__` to normal `require`
  */
-export const getModuleFunctionParamsTransformer = (entryId: ModuleId, entryPath: string) => {
+export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
     return VisitorWrapper({
 
         Program(path) {
@@ -67,7 +67,7 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId, entryPath:
 
             const requireId = requireIdE.value
             const isEntryRequire = requireId == entryId
-            const requirePath = isEntryRequire ? `./${entryPath}` : `./${requireId}.ts`
+            const requirePath = `./${isEntryRequire ? "entry_" : ""}${requireId}`
 
             path.replaceWith(
                 callExpression(REQUIRE_CALLEE, [stringLiteral(requirePath)])
