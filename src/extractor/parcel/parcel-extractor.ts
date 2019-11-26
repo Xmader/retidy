@@ -4,7 +4,7 @@ import solveModules from "./solve-modules"
 import extractModules from "./extract-modules"
 
 export const parcelExtractor: Extractor = (ast, options) => {
-    const modules = solveModules(extractModules(ast, options))
+    const modules = solveModules(extractModules(ast, options), options)
     return modules
 }
 

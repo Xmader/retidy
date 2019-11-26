@@ -94,8 +94,10 @@ export const extractModules: Extractor = (ast, options) => {
         }
     }
 
+    const ext = options.outputFileType == "typescript" ? "ts" : "js"
+
     const entryID = options.entryPoint
-    const entryPath = `entry_${entryID}.js`
+    const entryPath = `entry_${entryID}.${ext}`
 
     const modules: ModulesObj = {}
     const solveModule = (moduleFunction: FunctionExpression, id: ModuleId) => {
@@ -108,7 +110,7 @@ export const extractModules: Extractor = (ast, options) => {
         }
         const { params, body: moduleAST } = moduleFunction
 
-        const modulePath = `${isEntry ? "entry_" : ""}${id}.js`
+        const modulePath = `${isEntry ? "entry_" : ""}${id}.${ext}`
 
         // put module function params in module body 
         // minified `function(e,t,n){`

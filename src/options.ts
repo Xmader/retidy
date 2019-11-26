@@ -17,6 +17,13 @@ export interface Options {
     /** @default "retidy-out" */
     outDir?: string;
 
+    /** 
+     * for the compatibility of module solving
+     * @default "javascript"
+     * @see https://www.typescriptlang.org/docs/handbook/modules.html
+     */
+    outputFileType?: "javascript" | "typescript";
+
     transformerOptions?: TransformOptions;
     /**
      * extra transformers that run before any other transformers  
@@ -48,6 +55,7 @@ export const defaultOptions: Options = {
     type: "webpack",
     writeFiles: true,
     outDir: "./retidy-out/",
+    outputFileType: "javascript",
     bundleAstReferenceKeys: ["body", 0, "expression", "argument"],  // !function(modules){…
     replaceModuleFunctionParams: true,
 }

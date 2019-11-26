@@ -2,20 +2,21 @@
 import { AssetId } from "../module"
 import { ParcelExtractedModules } from "./extract-modules"
 import { ExtractResult, ModulesObj } from "../extractor-utils"
+import { Options } from "../../options"
 import { URL } from "url"
 import { extname } from "path"
 import isRelativeModulePath from "../../utils/is-relative-module-path"
 
-const normalizeModulePath = (path: string) => {
+const normalizeModulePath = (path: string, outputExt: string = "js") => {
     let p = path.match(/^file:\/\/(?:\.+\/)?(.+)/)[1]
     const e = extname(p)
     if (!e || !(e == ".js" || e == ".json" || e == ".jsx" || e == ".ts" || e == ".tsx")) {
-        p += ".js"
+        p += `.${outputExt}`  // ".js"
     }
     return p
 }
 
-export const solveModules = (parcelExtracted: ParcelExtractedModules): ExtractResult => {
+export const solveModules = (parcelExtracted: ParcelExtractedModules, options: Options): ExtractResult => {
     const { entry: entryId, modulesMap } = parcelExtracted
 
     const pathsMap = new Map<AssetId, string>()
@@ -48,16 +49,18 @@ export const solveModules = (parcelExtracted: ParcelExtractedModules): ExtractRe
     //     throw new Error("something goes wrong")
     // }
 
+    const ext = options.outputFileType == "typescript" ? "ts" : "js"
+
     const modules: ModulesObj = {}
     pathsMap.forEach((modulePath, id) => {
-        const p = normalizeModulePath(modulePath)
+        const p = normalizeModulePath(modulePath, ext)
         modules[p] = modulesMap.get(id)
     })
 
     return {
         modules,
         entry: entryId,
-        entryPath: "entry.js"
+        entryPath: `entry.${ext}`
     }
 }
 
