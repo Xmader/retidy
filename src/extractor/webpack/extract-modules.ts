@@ -95,7 +95,7 @@ export const extractModules: Extractor = (ast, options) => {
     }
 
     const entryID = options.entryPoint
-    const entryPath = `entry_${entryID}.ts`
+    const entryPath = `entry_${entryID}.js`
 
     const modules: ModulesObj = {}
     const solveModule = (moduleFunction: FunctionExpression, id: ModuleId) => {
@@ -108,7 +108,7 @@ export const extractModules: Extractor = (ast, options) => {
         }
         const { params, body: moduleAST } = moduleFunction
 
-        const modulePath = `${isEntry ? "entry_" : ""}${id}.ts`
+        const modulePath = `${isEntry ? "entry_" : ""}${id}.js`
 
         // put module function params in module body 
         // minified `function(e,t,n){`

@@ -51,7 +51,7 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
         },
 
         // transform `__webpack_require__` to normal `require`
-        // `__webpack_require__(0)` -> `require("./0.ts")`
+        // `__webpack_require__(0)` -> `require("./0")`
         CallExpression(path) {
             const { node } = path
             const { callee, arguments: { 0: requireIdE } } = node

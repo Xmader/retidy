@@ -10,7 +10,7 @@ const normalizeModulePath = (path: string) => {
     let p = path.match(/^file:\/\/(?:\.+\/)?(.+)/)[1]
     const e = extname(p)
     if (!e || !(e == ".js" || e == ".json" || e == ".jsx" || e == ".ts" || e == ".tsx")) {
-        p += ".ts"
+        p += ".js"
     }
     return p
 }
@@ -57,7 +57,7 @@ export const solveModules = (parcelExtracted: ParcelExtractedModules): ExtractRe
     return {
         modules,
         entry: entryId,
-        entryPath: "entry.ts"
+        entryPath: "entry.js"
     }
 }
 
