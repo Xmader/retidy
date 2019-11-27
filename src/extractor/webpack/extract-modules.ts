@@ -1,26 +1,23 @@
 
 import { Extractor, getInputProgramAST, ModulesObj } from "../extractor-utils"
 import { ModuleId } from "../module"
+import { getWebpackBundleInfo, getWebpackJsonpBundleInfo, WebpackBundleInfo } from "./bundle-info"
 import {
     isCallExpression,
     isFunctionExpression,
-    isReturnStatement,
-    isSequenceExpression,
     isStringLiteral,
     isNumericLiteral,
-    isAssignmentExpression,
     isArrayExpression,
     isObjectExpression,
     isObjectProperty,
     isIdentifier,
-    CallExpression,
     FunctionExpression,
     variableDeclaration,
     variableDeclarator,
     identifier,
 } from "@babel/types"
 
-const NOT_WEBPACK_BOOTSTRAP_AST_ERR = new TypeError("not a webpackBootstrap function call AST.")
+export const NOT_WEBPACK_BOOTSTRAP_AST_ERR = new TypeError("not a webpackBootstrap function call AST.")
 
 const moduleFunctionParams = ["module", "exports", "__webpack_require__"]
 
@@ -40,69 +37,22 @@ export const extractModules: Extractor = (ast, options) => {
         throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
     }
 
-    const { callee, arguments: { 0: fArgument } } = (ast as CallExpression)
-    if (!isFunctionExpression(callee)) {
-        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+    let bundleInfo: WebpackBundleInfo
+    if (options.type == "webpack-jsonp") {
+        bundleInfo = getWebpackJsonpBundleInfo(ast, options)
+    } else {
+        // if (options.type == "webpack") {
+        bundleInfo = getWebpackBundleInfo(ast, options)
     }
 
-    // try to get entry id
-    if (typeof options.entryPoint !== "string" || typeof options.entryPoint !== "number") {
-        options.entryPoint = undefined
-        try {
-            // unminified file
-            // the last statement:
-            // e.g. `return __webpack_require__(__webpack_require__.s = 8);`
-
-            // minified file
-            // the last statement:
-            // e.g. `return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=8)`
-
-            const lastStatement = callee.body.body.pop()
-
-            if (!isReturnStatement(lastStatement)) {
-                throw new Error()
-            }
-
-            const e = lastStatement.argument
-
-            let entryRequireCall: CallExpression
-
-            if (isCallExpression(e)) {
-                entryRequireCall = e
-            } else if (isSequenceExpression(e)) {
-                entryRequireCall = e.expressions.pop() as CallExpression
-            }
-            if (!isCallExpression(entryRequireCall)) {
-                throw new Error()
-            }
-
-            const entryRequireCallArgument = entryRequireCall.arguments[0]
-            if (isNumericLiteral(entryRequireCallArgument)) {
-                options.entryPoint = entryRequireCallArgument.value
-            } else if (isAssignmentExpression(entryRequireCallArgument)) {
-                const a = entryRequireCallArgument.right
-                if (isNumericLiteral(a)) {
-                    options.entryPoint = a.value
-                }
-            }
-
-            if (typeof options.entryPoint == "undefined") {
-                throw new Error()
-            }
-        } catch (_) {
-            throw new Error("options.entryPoint is undefined and failed to get entry id.")
-        }
-    }
-
+    const { entryId, modulesAST } = bundleInfo
     const ext = options.outputFileType == "typescript" ? "ts" : "js"
-
-    const entryID = options.entryPoint
-    const entryPath = `entry_${entryID}.${ext}`
+    const entryPath = `entry_${entryId}.${ext}`
 
     const modules: ModulesObj = {}
     const solveModule = (moduleFunction: FunctionExpression, id: ModuleId) => {
 
-        const isEntry = id == entryID
+        const isEntry = id == entryId
 
         // get module ast block
         if (!isFunctionExpression(moduleFunction)) {
@@ -139,10 +89,10 @@ export const extractModules: Extractor = (ast, options) => {
 
     }
 
-    if (isArrayExpression(fArgument)) {
-        fArgument.elements.forEach(solveModule)
-    } else if (isObjectExpression(fArgument)) {
-        fArgument.properties.forEach((p) => {
+    if (isArrayExpression(modulesAST)) {
+        modulesAST.elements.forEach(solveModule)
+    } else if (isObjectExpression(modulesAST)) {
+        modulesAST.properties.forEach((p) => {
             if (!isObjectProperty(p)) {
                 throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
             }
@@ -160,7 +110,7 @@ export const extractModules: Extractor = (ast, options) => {
 
     return {
         modules: modules,
-        entry: options.entryPoint,
+        entry: entryId,
         entryPath: entryPath,
     }
 }

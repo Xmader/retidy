@@ -10,6 +10,7 @@ export const allExtractors = {
     // "parcel-v1": parcelExtractor,  // alias
     // "parcel-v2": parcelV2Extractor,  // parcel v2 is unreleased
     "webpack": webpackExtractor,
+    "webpack-jsonp": webpackExtractor,
 }
 
 export const extractor: Extractor = (ast, options?: Options) => {
