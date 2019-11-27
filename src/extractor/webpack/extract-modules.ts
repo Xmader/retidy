@@ -54,6 +54,11 @@ export const extractModules: Extractor = (ast, options) => {
 
         const isEntry = id == entryId
 
+        // an empty module funtion in a modulesAST (ArrayExpression), e.g. [,,, normal module funtion ]
+        if (!moduleFunction) {
+            return
+        }
+
         // get module ast block
         if (!isFunctionExpression(moduleFunction)) {
             throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
