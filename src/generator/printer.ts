@@ -116,6 +116,7 @@ export class Printer {
                 && !previousLine.endsWith("{")
                 && !previousLine.endsWith("[")
                 && !previousLine.endsWith(";")
+                && !previousLine.endsWith(",")
             ) {
                 // add prefix ";" to each line starts with "(" or "["
                 l = l.replace(addSemicolonRegex, `$1;${EOL}$1$2`)
