@@ -120,7 +120,7 @@ export const getWebpackJsonpBundleInfo = (callAST: CallExpression, options: Opti
             options.entryPoint = entryIdE.value
 
         } catch (_) {
-            throw ENTRYPOINT_NOTFOUND_ERR
+            // throw ENTRYPOINT_NOTFOUND_ERR
         }
     }
 
