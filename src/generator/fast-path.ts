@@ -130,9 +130,9 @@ class FastPath {
     }
 
     getParentStatement() {
-        for (let i = 0; i < this.stack.length; i++) {
-            const node = getNodeHelper(this, i)
-            if (n.Statement.check(node)) {
+        for (let i = this.stack.length - 1; i >= 0; i -= 2) {
+            const node = this.stack[i]
+            if (n.Node.check(node) && n.Statement.check(node)) {
                 return node
             }
         }
@@ -634,21 +634,26 @@ class FastPath {
 
     isInFirstStatementOfBlock() {
         // get parent statement
-        let i = 0
+        let i = this.stack.length - 1
         let node: n.Node
-        for (; i < this.stack.length; i++) {
-            node = getNodeHelper(this, i)
-            if (n.Statement.check(node)) {
-                break
+        let statement: n.Statement
+        for (; i >= 0; i -= 2) {
+            node = this.stack[i]
+            if (n.Node.check(node)) {
+                if (statement) {
+                    // parent = node
+                    break
+                } else if (n.Statement.check(node)) {
+                    statement = node
+                }
             }
         }
 
-        const parent = getNodeHelper(this, i + 1)
-        if (!n.BlockStatement.check(parent)) {
+        if (!n.BlockStatement.check(node)) {
             return
         }
 
-        return parent.body[0] == node
+        return node.body[0] == statement
     }
 
 }
