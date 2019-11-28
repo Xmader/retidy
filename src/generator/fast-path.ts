@@ -6,7 +6,7 @@ const isArray = types.builtInTypes.array
 const isNumber = types.builtInTypes.number
 import * as util from "./util"
 
-function getNodeHelper(path: any, count: number) {
+function getNodeHelper(path: FastPath, count: number) {
     const s = path.stack
 
     for (let i = s.length - 1; i >= 0; i -= 2) {
@@ -127,6 +127,15 @@ class FastPath {
 
     getParentNode(count = 0) {
         return getNodeHelper(this, ~~count + 1)
+    }
+
+    getParentStatement() {
+        for (let i = 0; i < this.stack.length; i++) {
+            const node = getNodeHelper(this, i)
+            if (n.Statement.check(node)) {
+                return node
+            }
+        }
     }
 
     // The length of the stack can be either even or odd, depending on whether
@@ -623,6 +632,24 @@ class FastPath {
         return true
     }
 
+    isInFirstStatementOfBlock() {
+        // get parent statement
+        let i = 0
+        let node: n.Node
+        for (; i < this.stack.length; i++) {
+            node = getNodeHelper(this, i)
+            if (n.Statement.check(node)) {
+                break
+            }
+        }
+
+        const parent = getNodeHelper(this, i + 1)
+        if (!n.BlockStatement.check(parent)) {
+            return
+        }
+
+        return parent.body[0] == node
+    }
 
 }
 

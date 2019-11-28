@@ -168,10 +168,11 @@ export class Printer {
 
 }
 
-function genericPrint(path: any, config: any, options: any, printPath: any) {
+function genericPrint(path: FastPath, config: any, options: any, printPath: any) {
     assert.ok(path instanceof FastPath)
 
     const node = path.getValue()
+    const selfNode = path.getNode()
     const parts = []
     const linesWithoutParens =
         genericPrintNoParens(path, config, printPath)
@@ -195,6 +196,13 @@ function genericPrint(path: any, config: any, options: any, printPath: any) {
 
     if (shouldAddParens) {
         parts.unshift("(")
+        if (path.firstInStatement() && !path.isInFirstStatementOfBlock()) {
+            parts.unshift(";\n")
+        }
+    }
+
+    if (namedTypes.ArrayExpression.check(selfNode) && path.firstInStatement() && !path.isInFirstStatementOfBlock()) {
+        parts.unshift(";\n")
     }
 
     parts.push(linesWithoutParens)
@@ -247,7 +255,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
 
         case "Noop": // Babel extension.
         case "EmptyStatement":
-            return fromString("")
+            return fromString(";")
 
         case "ExpressionStatement":
             return concat([path.call(print, "expression")])
