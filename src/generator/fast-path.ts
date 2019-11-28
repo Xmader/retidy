@@ -653,7 +653,8 @@ class FastPath {
             return
         }
 
-        return node.body[0] == statement
+        return node.directives.length == 0  // directives (e.g. "use strict") go before any statement, see ./printer.ts#606
+            && node.body[0] == statement
     }
 
 }
