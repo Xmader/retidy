@@ -27,8 +27,6 @@ interface ResultInfo extends Lines {
     infos: LineInfo[]
 }
 
-const addSemicolonRegex = /^(\s*)([([])/mg
-
 export interface PrintResultType {
     code: string
     map?: object
@@ -105,26 +103,8 @@ export class Printer {
         // when printing generically.
         this.config.reuseWhitespace = false
 
-        const EOL = this.config && this.config.lineTerminator || "\n"
-
-        const lines = printGenerically(path).toString(this.config).split(EOL)
-        const code = lines.map((l, index) => {
-            const previousLine = lines[index - 1]
-
-            if (typeof previousLine == "string"
-                && !previousLine.endsWith("(")
-                && !previousLine.endsWith("{")
-                && !previousLine.endsWith("[")
-                && !previousLine.endsWith(";")
-                && !previousLine.endsWith(",")
-            ) {
-                // add prefix ";" to each line starts with "(" or "["
-                l = l.replace(addSemicolonRegex, `$1;${EOL}$1$2`)
-            }
-
-            // clean up for not adding ";" prefix in template strings
-            return l.replace("\uFFFF", "")
-        }).join(EOL)
+        const lines = printGenerically(path)
+        const code = lines.toString(this.config)
 
         // TODO Allow printing of comments?
         const pr = new PrintResult(code)
@@ -1434,7 +1414,7 @@ function genericPrintNoParens(path: any, options: any, print: any) {
 
         case "TemplateElement":
             return fromString(
-                n.value.raw.replace(addSemicolonRegex, "$1\uFFFF$2"),  // don't add ";" prefix in template strings
+                n.value.raw,
                 options
             ).lockIndentTail()
 
