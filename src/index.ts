@@ -21,7 +21,7 @@ export const resolveModule = async (modulePath: string, moduleInfo: Module, opti
         const code = generator(fileAST, generatorOptions).code
 
         if (options.writeFiles) {
-            const outputPath = pathJoin(options.outDir, modulePath)
+            const outputPath = pathJoin(options.outDir, encodeURIComponent(modulePath))
             await ensureDir(dirname(outputPath))
             await writeFile(outputPath, code)
         }

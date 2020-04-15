@@ -15,6 +15,9 @@ import {
     variableDeclaration,
     variableDeclarator,
     identifier,
+    StringLiteral,
+    NumericLiteral,
+    Identifier,
 } from "@babel/types"
 
 export const NOT_WEBPACK_BOOTSTRAP_AST_ERR = new TypeError("not a webpackBootstrap function call AST.")
@@ -101,13 +104,13 @@ export const extractModules: Extractor = (ast, options) => {
             if (!isObjectProperty(p)) {
                 throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
             }
-            if (!isStringLiteral(p.key) && !isNumericLiteral(p.key)) {
+            if (!isStringLiteral(p.key) && !isNumericLiteral(p.key) && !isIdentifier(p.key)) {
                 throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
             }
             if (!isFunctionExpression(p.value)) {
                 throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
             }
-            solveModule(p.value, p.key.value)
+            solveModule(p.value, (p.key as Identifier).name || (p.key as StringLiteral | NumericLiteral).value)
         })
     } else {
         throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
