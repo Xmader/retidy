@@ -5,6 +5,7 @@ import {
     isVariableDeclaration,
     isIdentifier,
     isNumericLiteral,
+    isStringLiteral,
     identifier,
     callExpression,
     stringLiteral,
@@ -61,7 +62,7 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
                 return
             }
 
-            if (!isNumericLiteral(requireIdE)) {
+            if (!isNumericLiteral(requireIdE) && !isStringLiteral(requireIdE)) {
                 throw transformErr()
             }
 
