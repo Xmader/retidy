@@ -56,11 +56,21 @@ export const defaultOptions: Options = {
     writeFiles: true,
     outDir: "./retidy-out/",
     outputFileType: "javascript",
-    bundleAstReferenceKeys: ["body", 0, "expression", "argument"],  // !function(modules){…
+    bundleAstReferenceKeys: [],
     replaceModuleFunctionParams: true,
+}
+
+export const defaultAstRefs = {
+    "webpack": ["body", 0, "expression", "argument"] as const,  // AST: `function(modules){…`
+    "webpack-jsonp": ["body", 0, "expression"] as const,        // AST: `(window.webpackJsonp = window.webpackJsonp || []).push(…` or simply `webpackJsonp.push(…`
 }
 
 export const normalizeOptions = (options?: Options): Options => {
     options = Object.assign({}, defaultOptions, options)
+
+    if (!options.bundleAstReferenceKeys || !options.bundleAstReferenceKeys.length) {
+        options.bundleAstReferenceKeys = defaultAstRefs[options.type] || []
+    }
+
     return options
 }
