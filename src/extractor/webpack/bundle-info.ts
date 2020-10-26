@@ -92,12 +92,14 @@ export const getWebpackBundleInfo = (callAST: CallExpression, options: Options):
 
 export const getWebpackJsonpBundleInfo = (callAST: CallExpression, options: Options): WebpackBundleInfo => {
 
-    const { callee, arguments: callArguments } = callAST
+    const { callee, arguments: callArgs } = callAST
     if (isFunctionExpression(callee)) {
         throw new TypeError("This bundle looks like a normal webpack bundle.\nset options.type = 'webpack', and try again.")
-    } else if (!isIdentifier(callee, { name: "webpackJsonp" })) {
-        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
     }
+
+    let callArguments = callArgs.length == 1
+        ? (callArgs[0] as ArrayExpression).elements
+        : callArgs
 
     // const [selfModuleIdArrE, modulesAST, entryIdArrE] = callArguments
     const [, modulesAST, entryIdArrE] = callArguments
