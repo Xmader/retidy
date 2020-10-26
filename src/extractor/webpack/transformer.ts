@@ -10,7 +10,7 @@ import {
     stringLiteral,
 } from "@babel/types"
 
-const ERR = new Error("something goes wrong.")
+const transformErr = () => new Error("something goes wrong.")
 
 const REQUIRE_CALLEE = identifier("require")
 
@@ -31,13 +31,13 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
 
             const paramsTransE = node.body[0]
             if (!isVariableDeclaration(paramsTransE, { kind: "const" })) {
-                throw ERR
+                throw transformErr()
             }
 
             paramsTransE.declarations.forEach((d) => {
                 const { id, init } = d
                 if (!isIdentifier(id) || !isIdentifier(init)) {
-                    throw ERR
+                    throw transformErr()
                 }
 
                 const paramName = id.name
@@ -62,7 +62,7 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
             }
 
             if (!isNumericLiteral(requireIdE)) {
-                throw ERR
+                throw transformErr()
             }
 
             const requireId = requireIdE.value
