@@ -31,7 +31,7 @@
     "@babel/types": "^7.7.2",
     "ast-types": "^0.13.2",
     "fs-extra": "^8.1.0",
-    "yargs": "^15.0.2"
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.0.8",
