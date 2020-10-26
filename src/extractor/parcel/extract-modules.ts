@@ -29,7 +29,7 @@ export interface ParcelExtractedModules {
     modulesMap: Map<AssetId, ParcelModule>,
 }
 
-const NOT_PARCEL_BUNDLE_ERR = new TypeError("input is not a parcel bundle AST")
+const notParcelBundleErr = () => new TypeError("input is not a parcel bundle AST")
 
 export const extractModules = (ast: ExtractorInputAST, options: Options): ParcelExtractedModules => {
 
@@ -38,16 +38,16 @@ export const extractModules = (ast: ExtractorInputAST, options: Options): Parcel
     // check parcel bundle
     const parcelRequireES = ast.body[0]  // parcelRequire=xxx
     if (!isExpressionStatement(parcelRequireES)) {
-        throw NOT_PARCEL_BUNDLE_ERR
+        throw notParcelBundleErr()
     }
 
     const parcelRequireE = parcelRequireES.expression
     // https://github.com/parcel-bundler/parcel/blob/fe0066b/packages/core/parcel-bundler/src/builtins/prelude.js
     if (!isAssignmentExpression(parcelRequireE) || !isIdentifier(parcelRequireE.left) || !isCallExpression(parcelRequireE.right)) {
-        throw NOT_PARCEL_BUNDLE_ERR
+        throw notParcelBundleErr()
     }
     if (parcelRequireE.left.name !== "parcelRequire") {
-        throw NOT_PARCEL_BUNDLE_ERR
+        throw notParcelBundleErr()
     }
 
     // https://github.com/parcel-bundler/parcel/blob/c2760fd/packages/core/parcel-bundler/src/packagers/JSPackager.js#L229
@@ -55,7 +55,7 @@ export const extractModules = (ast: ExtractorInputAST, options: Options): Parcel
 
     // get entry asset id
     if (!isArrayExpression(entryA)) {
-        throw NOT_PARCEL_BUNDLE_ERR
+        throw notParcelBundleErr()
     }
     const entryAssetIdE = entryA.elements.pop() as StringLiteral | NumericLiteral
     let entryAssetId: AssetId = entryAssetIdE.value
@@ -67,7 +67,7 @@ export const extractModules = (ast: ExtractorInputAST, options: Options): Parcel
 
     // extract modules
     if (!isObjectExpression(parcelModulesObj)) {
-        throw NOT_PARCEL_BUNDLE_ERR
+        throw notParcelBundleErr()
     }
     const parcelModules = parcelModulesObj.properties.map((p): ParcelModule => {
         if (!isObjectProperty(p)) {
@@ -76,42 +76,42 @@ export const extractModules = (ast: ExtractorInputAST, options: Options): Parcel
 
         // type AssetId = string | number
         if (!(isStringLiteral(p.key) || isNumericLiteral(p.key))) {
-            throw NOT_PARCEL_BUNDLE_ERR
+            throw notParcelBundleErr()
         }
         const id = p.key.value
         const isEntry = id == entryAssetId
 
         // modules are defined as an array: [ module function, map of requires ]
         if (!isArrayExpression(p.value)) {
-            throw NOT_PARCEL_BUNDLE_ERR
+            throw notParcelBundleErr()
         }
         const [moduleFunction, requires] = p.value.elements
 
         // get module ast block
         // function(require,module,exports) { …
         if (!isFunctionExpression(moduleFunction)) {
-            throw NOT_PARCEL_BUNDLE_ERR
+            throw notParcelBundleErr()
         }
         if (moduleFunction.params.length !== 3 || !moduleFunction.params.every(x => isIdentifier(x))) {
-            throw NOT_PARCEL_BUNDLE_ERR
+            throw notParcelBundleErr()
         }
         const moduleAST = moduleFunction.body
 
         const moduleRequires: ParcelRequireMap = {}
         if (!isObjectExpression(requires)) {
-            throw NOT_PARCEL_BUNDLE_ERR
+            throw notParcelBundleErr()
         }
         requires.properties.forEach((r) => {
             if (!isObjectProperty(r)) {
-                throw NOT_PARCEL_BUNDLE_ERR
+                throw notParcelBundleErr()
             }
 
             if (!(isStringLiteral(r.value) || isNumericLiteral(r.value))) {
-                throw NOT_PARCEL_BUNDLE_ERR
+                throw notParcelBundleErr()
             }
 
             if (!isStringLiteral(r.key)) {
-                throw NOT_PARCEL_BUNDLE_ERR
+                throw notParcelBundleErr()
             }
 
             moduleRequires[r.key.value] = r.value.value

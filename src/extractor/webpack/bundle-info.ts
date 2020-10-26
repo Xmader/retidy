@@ -1,6 +1,6 @@
 
 import { Options } from "../../options"
-import { NOT_WEBPACK_BOOTSTRAP_AST_ERR } from "./extract-modules"
+import { notWebpackBootstrapAstErr } from "./extract-modules"
 import { ModuleId } from "../module"
 import {
     isCallExpression,
@@ -23,7 +23,7 @@ export interface WebpackBundleInfo {
     modulesAST: ModulesAST;
 }
 
-const ENTRYPOINT_NOTFOUND_ERR = new Error("options.entryPoint is undefined and failed to get entry id.")
+const entrypointNotfoundErr = () => new Error("options.entryPoint is undefined and failed to get entry id.")
 
 export const getWebpackBundleInfo = (callAST: CallExpression, options: Options): WebpackBundleInfo => {
 
@@ -31,7 +31,7 @@ export const getWebpackBundleInfo = (callAST: CallExpression, options: Options):
     if (isIdentifier(callee)) {
         throw new TypeError("This bundle looks like a webpack-jsonp bundle.\nset options.type = 'webpack-jsonp', and try again.")
     } else if (!isFunctionExpression(callee)) {
-        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+        throw notWebpackBootstrapAstErr()
     }
 
     // try to get entry id
@@ -79,7 +79,7 @@ export const getWebpackBundleInfo = (callAST: CallExpression, options: Options):
                 throw new Error()
             }
         } catch (_) {
-            throw ENTRYPOINT_NOTFOUND_ERR
+            throw entrypointNotfoundErr()
         }
     }
 

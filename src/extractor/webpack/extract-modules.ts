@@ -20,7 +20,7 @@ import {
     Identifier,
 } from "@babel/types"
 
-export const NOT_WEBPACK_BOOTSTRAP_AST_ERR = new TypeError("not a webpackBootstrap function call AST.")
+export const notWebpackBootstrapAstErr = () => new TypeError("not a webpackBootstrap function call AST.")
 
 const moduleFunctionParams = ["module", "exports", "__webpack_require__"]
 
@@ -37,7 +37,7 @@ export const extractModules: Extractor = (ast, options) => {
     }
 
     if (!isCallExpression(ast)) {
-        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+        throw notWebpackBootstrapAstErr()
     }
 
     let bundleInfo: WebpackBundleInfo
@@ -64,7 +64,7 @@ export const extractModules: Extractor = (ast, options) => {
 
         // get module ast block
         if (!isFunctionExpression(moduleFunction)) {
-            throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+            throw notWebpackBootstrapAstErr()
         }
         const { params, body: moduleAST } = moduleFunction
 
@@ -79,7 +79,7 @@ export const extractModules: Extractor = (ast, options) => {
             variableDeclaration("const",
                 params.map((p, index) => {
                     if (!isIdentifier(p)) {
-                        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+                        throw notWebpackBootstrapAstErr()
                     }
                     return variableDeclarator(
                         identifier(p.name),
@@ -102,18 +102,18 @@ export const extractModules: Extractor = (ast, options) => {
     } else if (isObjectExpression(modulesAST)) {
         modulesAST.properties.forEach((p) => {
             if (!isObjectProperty(p)) {
-                throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+                throw notWebpackBootstrapAstErr()
             }
             if (!isStringLiteral(p.key) && !isNumericLiteral(p.key) && !isIdentifier(p.key)) {
-                throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+                throw notWebpackBootstrapAstErr()
             }
             if (!isFunctionExpression(p.value)) {
-                throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+                throw notWebpackBootstrapAstErr()
             }
             solveModule(p.value, (p.key as Identifier).name || (p.key as StringLiteral | NumericLiteral).value)
         })
     } else {
-        throw NOT_WEBPACK_BOOTSTRAP_AST_ERR
+        throw notWebpackBootstrapAstErr()
     }
 
     return {
