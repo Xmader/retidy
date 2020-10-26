@@ -4,6 +4,7 @@ import { Options } from "../options"
 
 import parcelExtractor from "./parcel/parcel-extractor"
 import webpackExtractor from "./webpack/webpack-extractor"
+import scriptExtractor from "./script/extractor"
 
 export const allExtractors = {
     "parcel": parcelExtractor,
@@ -11,6 +12,7 @@ export const allExtractors = {
     // "parcel-v2": parcelV2Extractor,  // parcel v2 is unreleased
     "webpack": webpackExtractor,
     "webpack-jsonp": webpackExtractor,
+    "none": scriptExtractor,  // a single script, not a bundle
 }
 
 export const extractor: Extractor = (ast, options?: Options) => {
