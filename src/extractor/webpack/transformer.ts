@@ -9,6 +9,7 @@ import {
     isMemberExpression,
     isNumericLiteral,
     isStringLiteral,
+    isNullLiteral,
     isFunctionExpression,
     identifier,
     callExpression,
@@ -20,6 +21,7 @@ import {
     Identifier,
     FunctionExpression,
     CallExpression,
+    Statement,
     Program,
     toStatement,
 } from "@babel/types"
@@ -46,15 +48,31 @@ function ${WEBPACK_REQUIRE_N_CALLEE.name}(m) {
 }
 `) as FunctionExpression)
 
-const addWebpackRequireNFn = (path: NodePath<CallExpression>) => {
+const NOOP_PROMISE_CALLEE = memberExpression(identifier("Promise"), identifier("resolve")) // Promise.resolve()
+
+const addGlobalStatement = (path: NodePath<CallExpression>, statement: Statement) => {
     const rootNode = path.scope.getProgramParent().path.node as Program
-    if (!rootNode.body.includes(WEBPACK_REQUIRE_N)) {
-        rootNode.body.push(WEBPACK_REQUIRE_N)
+    if (!rootNode.body.includes(statement)) {
+        rootNode.body.push(statement)
     }
 }
 
 const isWebpackRequire = (node: object): node is Identifier => {
     return isIdentifier(node, { name: "__webpack_require__" })
+}
+
+const transformWebpackRequire = (path: NodePath<CallExpression>, requireIdE: CallExpression["arguments"][0], entryId: ModuleId) => {
+    if (!isNumericLiteral(requireIdE) && !isStringLiteral(requireIdE)) {
+        throw transformErr()
+    }
+
+    const requireId = requireIdE.value
+    const isEntryRequire = requireId == entryId
+    const requirePath = `./${isEntryRequire ? "entry_" : ""}${requireId}`
+
+    path.replaceWith(
+        callExpression(REQUIRE_CALLEE, [stringLiteral(requirePath)])
+    )
 }
 
 /**
@@ -102,19 +120,8 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
             if (isWebpackRequire(callee)) {
                 // transform `__webpack_require__` to normal `require`
                 // `__webpack_require__(0)` -> `require("./0")`
-
                 const { 0: requireIdE } = callArgs
-                if (!isNumericLiteral(requireIdE) && !isStringLiteral(requireIdE)) {
-                    throw transformErr()
-                }
-
-                const requireId = requireIdE.value
-                const isEntryRequire = requireId == entryId
-                const requirePath = `./${isEntryRequire ? "entry_" : ""}${requireId}`
-
-                path.replaceWith(
-                    callExpression(REQUIRE_CALLEE, [stringLiteral(requirePath)])
-                )
+                transformWebpackRequire(path, requireIdE, entryId)
             } else if ( // __webpack_require__.fn(exports, …
                 isMemberExpression(callee) &&
                 isWebpackRequire(callee.object) &&
@@ -168,9 +175,33 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
                         callExpression(WEBPACK_REQUIRE_N_CALLEE, callArgs)
                     )
 
-                    addWebpackRequireNFn(path)
+                    addGlobalStatement(path, WEBPACK_REQUIRE_N)
+                } else if (method == "bind") {
+                    // __webpack_require__.bind(null, …)
+
+                    if (!isNullLiteral(callArgs[0])) {
+                        throw transformErr()
+                    }
+
+                    const requireIdE = callArgs[1]
+                    transformWebpackRequire(path, requireIdE, entryId)
+                } else if (method == "e") {
+                    // __webpack_require__.e: load jsonp chunk
+
+                    const [chunkId] = callArgs
+                    if (callArgs.length !== 1) {
+                        throw transformErr()
+                    }
+                    if (!isNumericLiteral(chunkId) && !isStringLiteral(chunkId)) {
+                        throw transformErr()
+                    }
+
+                    // `Promise.resolve(/* webpack chunk: ${chunkId.value} */)`
+                    path.replaceWith(
+                        callExpression(NOOP_PROMISE_CALLEE, [chunkId])
+                    )
                 } else {
-                    throw unknownRuntimeFnErr()
+                    console.error(unknownRuntimeFnErr())
                 }
             }
         },
