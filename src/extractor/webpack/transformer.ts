@@ -1,6 +1,8 @@
 
 import { VisitorWrapper } from "../../utils/visitor-wrapper"
 import { ModuleId } from "../module"
+import { parseExpression } from "@babel/parser"
+import { NodePath } from "@babel/traverse"
 import {
     isVariableDeclaration,
     isIdentifier,
@@ -17,6 +19,9 @@ import {
     booleanLiteral,
     Identifier,
     FunctionExpression,
+    CallExpression,
+    Program,
+    toStatement,
 } from "@babel/types"
 
 const transformErr = () => new Error("something goes wrong.")
@@ -24,6 +29,29 @@ const unknownRuntimeFnErr = () => new Error("unknown webpack runtime function")
 
 const REQUIRE_CALLEE = identifier("require")
 const DEFINEPROPERTY_CALLEE = memberExpression(identifier("Object"), identifier("defineProperty")) // Object.defineProperty
+
+const WEBPACK_REQUIRE_N_CALLEE = identifier("__webpack_getDefaultExport")
+const WEBPACK_REQUIRE_N = toStatement(parseExpression(`
+/**
+ * @template T
+ * @argument {T} m
+ * @returns {T extends { __esModule: true } ? () => T['default'] : () => T}
+ */
+function ${WEBPACK_REQUIRE_N_CALLEE.name}(m) {
+    var getter = m && m.__esModule ?
+        function getDefault() { return m["default"] } :
+        function getModuleExports() { return m }
+        Object.defineProperty(getter, "a", { enumerable: true, get: getter })
+    return getter
+}
+`) as FunctionExpression)
+
+const addWebpackRequireNFn = (path: NodePath<CallExpression>) => {
+    const rootNode = path.scope.getProgramParent().path.node as Program
+    if (!rootNode.body.includes(WEBPACK_REQUIRE_N)) {
+        rootNode.body.push(WEBPACK_REQUIRE_N)
+    }
+}
 
 const isWebpackRequire = (node: object): node is Identifier => {
     return isIdentifier(node, { name: "__webpack_require__" })
@@ -90,15 +118,14 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
             } else if ( // __webpack_require__.fn(exports, …
                 isMemberExpression(callee) &&
                 isWebpackRequire(callee.object) &&
-                isIdentifier(callee.property) &&
-                isIdentifier(callArgs[0], { name: "exports" })
+                isIdentifier(callee.property)
             ) {
-                if (callee.property.name == "d") {  // callArgs.length > 1
+                const method = callee.property.name
+                if (method == "d") {  // callArgs.length > 1
                     // transform `__webpack_require__.d(exports, "…", function(){…})`
                     // __webpack_require__.d: define getter function for harmony exports
                     const [, exportName, exportGetter] = callArgs
                     if (!isStringLiteral(exportName) && !isFunctionExpression(exportGetter)) {
-                        console.log(node)
                         throw transformErr()
                     }
 
@@ -112,7 +139,7 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
                             ])
                         ])
                     )
-                } else if (callee.property.name == "r") {
+                } else if (method == "r") {
                     // transform `__webpack_require__.r(exports)
                     // __webpack_require__.r: define __esModule on exports
                     //                        (useless for our "re-tidied" code)
@@ -129,6 +156,19 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
                             ])
                         ])
                     )
+                } else if (method == "n") {
+                    // __webpack_require__.n(…)
+                    // __webpack_require__.n: getDefaultExport function for compatibility with non-harmony modules
+
+                    if (callArgs.length !== 1 || !isIdentifier(callArgs[0])) {
+                        throw transformErr()
+                    }
+
+                    path.replaceWith(
+                        callExpression(WEBPACK_REQUIRE_N_CALLEE, callArgs)
+                    )
+
+                    addWebpackRequireNFn(path)
                 } else {
                     throw unknownRuntimeFnErr()
                 }
