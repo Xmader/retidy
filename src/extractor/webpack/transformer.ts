@@ -48,7 +48,12 @@ function ${WEBPACK_REQUIRE_N_CALLEE.name}(m) {
 }
 `) as FunctionExpression)
 
-const NOOP_PROMISE_CALLEE = memberExpression(identifier("Promise"), identifier("resolve")) // Promise.resolve()
+const WEBPACK_REQUIRE_E_CALLEE = identifier("__webpack_loadChunk")
+const WEBPACK_REQUIRE_E = toStatement(parseExpression(`
+function ${WEBPACK_REQUIRE_E_CALLEE.name}(chunkId) {
+    return Promise.resolve(void chunkId) // noop
+}
+`) as FunctionExpression)
 
 const addGlobalStatement = (path: NodePath<CallExpression>, statement: Statement) => {
     const rootNode = path.scope.getProgramParent().path.node as Program
@@ -198,8 +203,10 @@ export const getModuleFunctionParamsTransformer = (entryId: ModuleId) => {
 
                     // `Promise.resolve(/* webpack chunk: ${chunkId.value} */)`
                     path.replaceWith(
-                        callExpression(NOOP_PROMISE_CALLEE, [chunkId])
+                        callExpression(WEBPACK_REQUIRE_E_CALLEE, callArgs)
                     )
+
+                    addGlobalStatement(path, WEBPACK_REQUIRE_E)
                 } else {
                     console.error(unknownRuntimeFnErr())
                 }
