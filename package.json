@@ -1,6 +1,6 @@
 {
   "name": "retidy",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Extract, unminify, and beautify (\"retidy\") each file from a webpack/parcel bundle",
   "main": "dist/index.js",
   "bin": {
