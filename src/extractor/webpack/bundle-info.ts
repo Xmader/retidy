@@ -35,7 +35,7 @@ export const getWebpackBundleInfo = (callAST: CallExpression, options: Options):
     }
 
     // try to get entry id
-    if (typeof options.entryPoint !== "string" || typeof options.entryPoint !== "number") {
+    if (typeof options.entryPoint !== "string" && typeof options.entryPoint !== "number") {
         options.entryPoint = undefined
         try {
             // unminified file
